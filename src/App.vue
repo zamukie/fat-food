@@ -4,59 +4,28 @@
         <img src="./assets/art3.png" class="logo">
     </div>
     <div class="topNav">
-        <button @click="changePage(1)">อาหาร</button>
-        <button @click="changePage(2)">สมาชิก</button>
-        <button @click="changePage(3)">รายการสั่งซื้อ</button>
+        <button :class="tab === 1 ? 'activeButton' : 'topnavButton'" @click="changePage(1)">อาหาร</button>
+        <button :class="tab === 2 ? 'activeButton' : 'topnavButton'" @click="changePage(2)">สมาชิก</button>
+        <button :class="tab === 3 ? 'activeButton' : 'topnavButton'" @click="changePage(3)">รายการสั่งซื้อ</button>
     </div>
     <div class="content">
         <div v-if="tab === 1">
             <div class="menu">
-                <div class="card">
-                    <img :src="require('./assets/' + krapraw.image)" id="foodpicture" alt="Avatar" />
-                    <div>
-                        <h3>{{ krapraw.title }}</h3>
-                        <p>{{ krapraw.description }}</p>
+                <div v-for="(food, i) in foodList.recommens" :key="i">
+                    <div class="card">
+                        <img :src="require('./assets/' + food.image)" id="foodpicture" alt="Avatar" />
+                        <h3>{{ food.title }}</h3>
+                        <p>{{ food.description }}</p>
+                        <button @click="addToCart(food)" class="addButton">Add to cart</button>
                     </div>
-                    <h3>{{ krapraw.price }} $</h3>
-                    <button @click="addToCart(krapraw)" class="addButton">Add to cart</button>
-                </div>
-                <div class="card">
-                    <img :src="require('./assets/' + radna.image)" id="foodpicture" alt="Avatar" />
-                    <div>
-                        <h3>{{ radna.title }}</h3>
-                        <p>{{ radna.description }}</p>
-                    </div>
-                    <h3>{{ radna.price }} $</h3>
-                    <button @click="addToCart(radna)" class="addButton">Add to cart</button>
                 </div>
             </div>
-            <div class="menu">
-                <div class="card2">
-                    <img :src="require('./assets/' + padthai.image)" id="foodpicture" alt="Avatar" />
-                    <div>
-                        <h3>{{ padthai.title }}</h3>
-                        <p>{{ padthai.description }}</p>
-                    </div>
-                    <h3>{{ padthai.price }} $</h3>
-                    <button @click="addToCart(padthai)" class="addButton">Add to cart</button>
-                </div>
-                <div class="card2">
-                    <img  :src="require('./assets/' + padthai.image)" id="foodpicture" alt="Avatar" />
-                    <div>
-                        <h3>{{ padthai.title }}</h3>
-                        <p>{{ padthai.description }}</p>
-                    </div>
-                    <h3>{{ padthai.price }} $</h3>
-                    <button @click="addToCart(padthai)" class="addButton">Add to cart</button>
-                </div>
-                <div class="card2">
-                    <img  :src="require('./assets/' + padthai.image)" id="foodpicture" alt="Avatar" />
-                    <div>
-                        <h3>{{ padthai.title }}</h3>
-                        <p>{{ padthai.description }}</p>
-                    </div>
-                    <h3>{{ padthai.price }} $</h3>
-                    <button @click="addToCart(padthai)" class="addButton">Add to cart</button>
+            <div class="card2">
+                <div v-for="(food, i) in foodList.rest" :key="i">
+                    <img :src="require('./assets/' + food.image)" id="foodpicture" alt="Avatar" />
+                    <h3>{{ food.title }}</h3>
+                    <p>{{ food.description }}</p>
+                    <button @click="addToCart(food)" class="addButton">Add to cart</button>
                 </div>
             </div>
         </div>
@@ -77,17 +46,16 @@
             </div>
         </div>
         <div v-if="tab === 3">
-            <div v-if="cart">
-                <div class="menu">
-                    <div class="card2">
-                        <img :src="require('./assets/' + cart.image)" id="foodpicture" alt="Avatar" />
-                        <div>
-                            <h3>{{ cart.title }}</h3>
-                            <p>{{ cart.description }}</p>
-                        </div>
-                        <h3>{{ cart.price }} $</h3>
-                    </div>
-                </div>
+            <h1>รายการสั่งซื้อ</h1>
+            <div class="card2" v-for="(each,i) in cart" :key="i">
+                <img :src="require('./assets/' + each.food.image)">
+                <h2>{{ each.food.title }}</h2>
+                <h4>{{ each.food.description }}</h4>
+                <h4>{{ each.food.price }}</h4>
+                <button class="addButton" @click="removeCart(each)">-</button>
+            </div>
+            <div>
+                <h2>ราคารวมสินค้า {{ total }} บาท </h2>
             </div>
         </div>
     </div>
@@ -103,27 +71,65 @@ export default {
                 email: '',
                 password: ''
             },
-            cart: null,
-
-            krapraw: {
-                image: 'kapraw.jpg',
-                title: 'ข้าวกะเพรา',
-                description: 'ข้าวกะเพราหมูสับ',
-                price: 200
-            },
-            radna: {
-                image: 'radna.jpg',
-                title: 'ราดหน้า',
-                description: 'ราดหน้าทะเล',
-                price: 200
-            },
-            padthai: {
-                image: 'padthai.jpg',
-                title: 'ผัดไทย',
-                description: 'ผัดไทยโบราณ',
-                price: 200
-            }
+            cart: [],
+            id: 1,
+            foods: [{
+                    image: 'kapraw.jpg',
+                    title: 'ข้าวกะเพรา',
+                    description: 'ข้าวกะเพราหมูสับ',
+                    price: 200
+                },
+                {
+                    image: 'radna.jpg',
+                    title: 'ราดหน้า',
+                    description: 'ราดหน้าทะเล',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+            ]
         }
+    },
+
+    computed: {
+        total() {
+            let total = 0
+            for (let i = 0; i < this.cart.length; i++) {
+                total += this.cart[i].food.price
+            }
+            return total
+        },
+        foodList() {
+            const recommens = []
+            const rest = []
+            for (let i = 0; i < this.foods.length; i++) {
+                if (i <= 1) {
+                    recommens.push(this.foods[i])
+                } else {
+                    rest.push(this.foods[i])
+                }
+            }
+            return {
+                recommens: recommens,
+                rest: rest
+            }
+        },
     },
 
     methods: {
@@ -131,8 +137,22 @@ export default {
             this.tab = page
         },
         addToCart(food) {
-            this.cart = food
             alert('เพิ่มรายการสำเร็จ')
+            this.cart.push({
+                id: this.id,
+                food: food
+            })
+            this.id++
+        },
+        removeCart(cartItem) {
+            const cart = []
+            for(let i = 0; i < this.cart.length; i++) {
+                const current = this.cart[i]
+                if(cartItem.id !== current.id) {
+                    cart.push(current)
+                }
+            }
+            this.cart = cart
         }
     }
 }
@@ -170,7 +190,7 @@ body {
     margin: 30px 250px 20px;
 }
 
-.topNav button {
+.topnavButton {
     color: #D7CAC5;
     text-align: center;
     padding: 14px 16px;
@@ -183,9 +203,22 @@ body {
     border: 3px solid #aaa;
 }
 
-.topNav button:hover {
+.topnavButton:hover {
     background-color: #D7CAC5;
     color: #783833;
+}
+
+.activeButton {
+    background-color: #D7CAC5;
+    color: #783833;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 50px;
+    margin-left: 10px;
+    width: 150px;
+    border: 3px solid #aaa;
 }
 
 .content {
@@ -214,6 +247,8 @@ body {
 }
 
 .card {
+    display: flex;
+    flex-direction: column;
     border-radius: 10px;
     padding: 5px;
     border: 3px solid #783833;
@@ -265,12 +300,6 @@ body {
     background-color: burlywood;
     color: #000;
     border: 2px solid #000;
-}
-
-.activeButton {
-    background-color: crimson;
-    color: white;
-    border: 3px solid tan;
 }
 
 .title {
