@@ -11,22 +11,10 @@
     <div class="content">
         <div v-if="tab === 1">
             <div class="menu">
-                <div v-for="(food, i) in foodList.recommens" :key="i">
-                    <div class="card">
-                        <img :src="require('./assets/' + food.image)" id="foodpicture" alt="Avatar" />
-                        <h3>{{ food.title }}</h3>
-                        <p>{{ food.description }}</p>
-                        <button @click="addToCart(food)" class="addButton">Add to cart</button>
-                    </div>
-                </div>
+                <Recommens @add="addMore" :foods="foodList.recommens" />
             </div>
-            <div class="card2">
-                <div v-for="(food, i) in foodList.rest" :key="i">
-                    <img :src="require('./assets/' + food.image)" id="foodpicture" alt="Avatar" />
-                    <h3>{{ food.title }}</h3>
-                    <p>{{ food.description }}</p>
-                    <button @click="addToCart(food)" class="addButton">Add to cart</button>
-                </div>
+            <div>
+                <Other :foods="foodList.rest" />
             </div>
         </div>
         <div v-if="tab === 2">
@@ -63,7 +51,14 @@
 </template>
 
 <script>
+import Recommens from './components/FoodList/Recommens.vue'
+import Other from './components/FoodList/Other.vue'
+
 export default {
+    components: {
+        Recommens,
+        Other
+    },
     data() {
         return {
             tab: 0,
@@ -83,6 +78,54 @@ export default {
                     image: 'radna.jpg',
                     title: 'ราดหน้า',
                     description: 'ราดหน้าทะเล',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
+                    price: 200
+                },
+                {
+                    image: 'padthai.jpg',
+                    title: 'ผัดไทย',
+                    description: 'ผัดไทยโบราณ',
                     price: 200
                 },
                 {
@@ -136,19 +179,20 @@ export default {
         changePage(page) {
             this.tab = page
         },
-        addToCart(food) {
+        addMore(food) {
             alert('เพิ่มรายการสำเร็จ')
             this.cart.push({
                 id: this.id,
                 food: food
             })
             this.id++
-        },
+            console.log(this.id);
+            console.log(PointerEvent)        },
         removeCart(cartItem) {
             const cart = []
-            for(let i = 0; i < this.cart.length; i++) {
+            for (let i = 0; i < this.cart.length; i++) {
                 const current = this.cart[i]
-                if(cartItem.id !== current.id) {
+                if (cartItem.id !== current.id) {
                     cart.push(current)
                 }
             }
@@ -230,39 +274,6 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-}
-
-.addButton {
-    width: 100%;
-    font-size: 20px;
-    background-color: aquamarine;
-    border-radius: 50px;
-    border: 2px solid white;
-    margin-top: 5px;
-}
-
-.addButton:hover {
-    background-color: brown;
-    color: white;
-}
-
-.card {
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    padding: 5px;
-    border: 3px solid #783833;
-    margin: 6px;
-    color: #D7CAC5;
-}
-
-.card img {
-    height: 300px;
-    width: 600px;
-}
-
-.card p {
-    margin-bottom: 5px;
 }
 
 .card2 {
